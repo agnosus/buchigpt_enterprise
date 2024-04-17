@@ -41,12 +41,12 @@ class OpenAIEmbeddings(ABC):
     """
 
     SUPPORTED_BATCH_AOAI_MODEL = {
-        "text-embedding-ada-002": {"token_limit": 8100, "max_batch_size": 16},
+        "text-embedding-3-large": {"token_limit": 8100, "max_batch_size": 16},
         "text-embedding-3-small": {"token_limit": 8100, "max_batch_size": 16},
         "text-embedding-3-large": {"token_limit": 8100, "max_batch_size": 16},
     }
     SUPPORTED_DIMENSIONS_MODEL = {
-        "text-embedding-ada-002": False,
+        "text-embedding-3-large": False,
         "text-embedding-3-small": True,
         "text-embedding-3-large": True,
     }

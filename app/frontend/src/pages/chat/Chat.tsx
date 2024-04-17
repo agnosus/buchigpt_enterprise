@@ -33,21 +33,22 @@ import { GPT4VSettings } from "../../components/GPT4VSettings";
 const Chat = () => {
     const [isConfigPanelOpen, setIsConfigPanelOpen] = useState(false);
     const [promptTemplate, setPromptTemplate] = useState<string>("");
-    const [temperature, setTemperature] = useState<number>(0.3);
-    const [minimumRerankerScore, setMinimumRerankerScore] = useState<number>(0);
-    const [minimumSearchScore, setMinimumSearchScore] = useState<number>(0);
-    const [retrieveCount, setRetrieveCount] = useState<number>(3);
+    const [temperature, setTemperature] = useState<number>(0);
+    const [minimumRerankerScore, setMinimumRerankerScore] = useState<number>(1.5);
+    const [minimumSearchScore, setMinimumSearchScore] = useState<number>(0.03);
+    const [retrieveCount, setRetrieveCount] = useState<number>(30);
     const [retrievalMode, setRetrievalMode] = useState<RetrievalMode>(RetrievalMode.Hybrid);
     const [useSemanticRanker, setUseSemanticRanker] = useState<boolean>(true);
     const [shouldStream, setShouldStream] = useState<boolean>(true);
-    const [useSemanticCaptions, setUseSemanticCaptions] = useState<boolean>(false);
+    const [useSemanticCaptions, setUseSemanticCaptions] = useState<boolean>(true);
     const [excludeCategory, setExcludeCategory] = useState<string>("");
-    const [useSuggestFollowupQuestions, setUseSuggestFollowupQuestions] = useState<boolean>(false);
+    const [useSuggestFollowupQuestions, setUseSuggestFollowupQuestions] = useState<boolean>(true);
     const [vectorFieldList, setVectorFieldList] = useState<VectorFieldOptions[]>([VectorFieldOptions.Embedding]);
     const [useOidSecurityFilter, setUseOidSecurityFilter] = useState<boolean>(false);
     const [useGroupsSecurityFilter, setUseGroupsSecurityFilter] = useState<boolean>(false);
     const [gpt4vInput, setGPT4VInput] = useState<GPT4VInput>(GPT4VInput.TextAndImages);
     const [useGPT4V, setUseGPT4V] = useState<boolean>(false);
+    const [useGPT4, setUseGPT4] = useState<boolean>(false);
 
     const lastQuestionRef = useRef<string>("");
     const chatMessageStreamEnd = useRef<HTMLDivElement | null>(null);
@@ -160,6 +161,7 @@ const Chat = () => {
                         use_groups_security_filter: useGroupsSecurityFilter,
                         vector_fields: vectorFieldList,
                         use_gpt4v: useGPT4V,
+                        use_gpt4: useGPT4,
                         gpt4v_input: gpt4vInput
                     }
                 },
@@ -218,15 +220,19 @@ const Chat = () => {
     };
 
     const onMinimumSearchScoreChange = (_ev?: React.SyntheticEvent<HTMLElement, Event>, newValue?: string) => {
-        setMinimumSearchScore(parseFloat(newValue || "0"));
+        setMinimumSearchScore(parseFloat(newValue || "0.03"));
+    };
+
+    const onUseGPT4Change = (_ev?: React.FormEvent<HTMLElement | HTMLInputElement>, checked?: boolean) => {
+        setUseGPT4(!!checked);
     };
 
     const onMinimumRerankerScoreChange = (_ev?: React.SyntheticEvent<HTMLElement, Event>, newValue?: string) => {
-        setMinimumRerankerScore(parseFloat(newValue || "0"));
+        setMinimumRerankerScore(parseFloat(newValue || "1.5"));
     };
 
     const onRetrieveCountChange = (_ev?: React.SyntheticEvent<HTMLElement, Event>, newValue?: string) => {
-        setRetrieveCount(parseInt(newValue || "3"));
+        setRetrieveCount(parseInt(newValue || "30"));
     };
 
     const onUseSemanticRankerChange = (_ev?: React.FormEvent<HTMLElement | HTMLInputElement>, checked?: boolean) => {
@@ -294,7 +300,7 @@ const Chat = () => {
                     {!lastQuestionRef.current ? (
                         <div className={styles.chatEmptyState}>
                             <SparkleFilled fontSize={"120px"} primaryFill={"rgba(115, 118, 225, 1)"} aria-hidden="true" aria-label="Chat logo" />
-                            <h1 className={styles.chatEmptyStateTitle}>Chat with your data</h1>
+                            <h1 className={styles.chatEmptyStateTitle}>KjelGPT</h1>
                             <h2 className={styles.chatEmptyStateSubtitle}>Ask anything or try an example</h2>
                             <ExampleList onExampleClicked={onExampleClicked} useGPT4V={useGPT4V} />
                         </div>
@@ -361,7 +367,7 @@ const Chat = () => {
                     <div className={styles.chatInput}>
                         <QuestionInput
                             clearOnSend
-                            placeholder="Type a new question (e.g. does my plan cover annual eye exams?)"
+                            placeholder="Type a new question (e.g. what is autodist?)"
                             disabled={isLoading}
                             onSend={question => makeApiRequest(question)}
                         />
@@ -380,7 +386,7 @@ const Chat = () => {
                 )}
 
                 <Panel
-                    headerText="Configure answer generation"
+                    headerText=""
                     isOpen={isConfigPanelOpen}
                     isBlocking={false}
                     onDismiss={() => setIsConfigPanelOpen(false)}
@@ -388,16 +394,16 @@ const Chat = () => {
                     onRenderFooterContent={() => <DefaultButton onClick={() => setIsConfigPanelOpen(false)}>Close</DefaultButton>}
                     isFooterAtBottom={true}
                 >
-                    <TextField
+                    {/* <TextField
                         className={styles.chatSettingsSeparator}
                         defaultValue={promptTemplate}
                         label="Override prompt template"
                         multiline
                         autoAdjustHeight
                         onChange={onPromptTemplateChange}
-                    />
+                    /> */}
 
-                    <Slider
+                    {/* <Slider
                         className={styles.chatSettingsSeparator}
                         label="Temperature"
                         min={0}
@@ -407,8 +413,8 @@ const Chat = () => {
                         onChange={onTemperatureChange}
                         showValue
                         snapToStep
-                    />
-
+                    /> */}
+{/* 
                     <SpinButton
                         className={styles.chatSettingsSeparator}
                         label="Minimum search score"
@@ -416,8 +422,8 @@ const Chat = () => {
                         step={0.01}
                         defaultValue={minimumSearchScore.toString()}
                         onChange={onMinimumSearchScoreChange}
-                    />
-
+                    /> */}
+{/* 
                     <SpinButton
                         className={styles.chatSettingsSeparator}
                         label="Minimum reranker score"
@@ -426,9 +432,9 @@ const Chat = () => {
                         step={0.1}
                         defaultValue={minimumRerankerScore.toString()}
                         onChange={onMinimumRerankerScoreChange}
-                    />
+                    /> */}
 
-                    <SpinButton
+                    {/* <SpinButton
                         className={styles.chatSettingsSeparator}
                         label="Retrieve this many search results:"
                         min={1}
@@ -458,7 +464,7 @@ const Chat = () => {
                         checked={useSuggestFollowupQuestions}
                         label="Suggest follow-up questions"
                         onChange={onUseSuggestFollowupQuestionsChange}
-                    />
+                    /> */}
 
                     {showGPT4VOptions && (
                         <GPT4VSettings
@@ -470,6 +476,13 @@ const Chat = () => {
                             updateGPT4VInputs={inputs => setGPT4VInput(inputs)}
                         />
                     )}
+
+                    <Checkbox
+                        className={styles.askSettingsSeparator}                 checked={useGPT4}
+                        label="Use GPT4 (can be very slow!)"
+                        onChange={onUseGPT4Change}
+                
+                    />
 
                     {showVectorOption && (
                         <VectorSettings
@@ -497,13 +510,18 @@ const Chat = () => {
                             onChange={onUseGroupsSecurityFilterChange}
                         />
                     )}
-
+{/* 
                     <Checkbox
                         className={styles.chatSettingsSeparator}
                         checked={shouldStream}
                         label="Stream chat completion responses"
                         onChange={onShouldStreamChange}
-                    />
+                    /> */}
+
+                    <div className={styles.chatSettingsSeparator}>
+                    Use 'Full text' option for numerical or keyword search (e.g. article numbers)
+                    </div>
+
                     {useLogin && <TokenClaimsDisplay />}
                 </Panel>
             </div>

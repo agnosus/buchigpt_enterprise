@@ -13,7 +13,7 @@ from approaches.approach import ThoughtStep
 from approaches.chatapproach import ChatApproach
 from core.authentication import AuthenticationHelper
 from core.modelhelper import get_token_limit
-
+import asyncio
 
 class ChatReadRetrieveReadApproach(ChatApproach):
     """
@@ -54,7 +54,7 @@ class ChatReadRetrieveReadApproach(ChatApproach):
 
     @property
     def system_message_chat_conversation(self):
-        return """Assistant helps the company employees with their healthcare plan questions, and questions about the employee handbook. Be brief in your answers.
+        return """Assistant helps with technical questions. Be brief in your answers.
         Answer ONLY with the facts listed in the list of sources below. If there isn't enough information below, say you don't know. Do not generate answers that don't use the sources below. If asking a clarifying question to the user would help, ask the question.
         For tabular information return it as an html table. Do not return markdown format. If the question is not in English, answer in the language used in the question.
         Each source has a name followed by colon and the actual information, always include the source name for each fact you use in the response. Use square brackets to reference the source, for example [info1.txt]. Don't combine sources, list each source separately, for example [info1.txt][info2.pdf].
@@ -133,7 +133,7 @@ class ChatReadRetrieveReadApproach(ChatApproach):
         chat_completion: ChatCompletion = await self.openai_client.chat.completions.create(
             messages=query_messages,  # type: ignore
             # Azure OpenAI takes the deployment name as the model name
-            model=self.chatgpt_deployment if self.chatgpt_deployment else self.chatgpt_model,
+            model="gpt4" if overrides.get('use_gpt4') else "chat",
             temperature=0.0,  # Minimize creativity for search query generation
             max_tokens=100,  # Setting too low risks malformed JSON, setting too high may affect performance
             n=1,
@@ -164,6 +164,50 @@ class ChatReadRetrieveReadApproach(ChatApproach):
             minimum_search_score,
             minimum_reranker_score,
         )
+
+        # GAHAintervention: each result is checked using gpt to see if it can answer the question 
+        async def generate_response(user_query, DOC, i):
+            doc = DOC[i].content
+            response = await self.openai_client.chat.completions.create(
+                model="gpt4" if overrides.get('use_gpt4') else "chat",
+                messages=[
+                    {
+                        "role": "system",
+                        "content": "You are a helpful assistant that is expert in technical text understanding. You pay attention to the smallest detail in the text. Keep it concise and to the point."
+                    },
+                    {
+                        "role": "user",
+                        "content": f"Answer the user query based on the following context. If the context does not contain enough information to answer the query, return NONE : \nQUERY: {user_query} \n CONTEXT: {doc}"
+                    }
+                ],
+                temperature=0)
+            response_str = str(response.choices[0].message.content).strip()
+            return response_str
+
+        async def generate_responses_async(user_query, DOC):
+            tasks = [generate_response(user_query, DOC, i) for i in range(len(DOC))]
+            responses = await asyncio.gather(*tasks)
+
+            RESPONSE = []
+            INDICES = []
+            for index, response_str in enumerate(responses):
+                if response_str.lower() != 'none':
+                    RESPONSE.append(response_str)
+                    INDICES.append(index)
+
+            return RESPONSE, INDICES
+
+        RESPONSE, INDICES = await generate_responses_async(query_text, results)
+
+        
+        for i in INDICES:
+            idx = INDICES.index(i)
+            results[i].content = RESPONSE[idx]
+        final_result = [results[i] for i in INDICES]
+        results = final_result
+
+        # end of intervention
+
 
         sources_content = self.get_sources_content(results, use_semantic_captions, use_image_citation=False)
         content = "\n".join(sources_content)
@@ -230,7 +274,7 @@ class ChatReadRetrieveReadApproach(ChatApproach):
 
         chat_coroutine = self.openai_client.chat.completions.create(
             # Azure OpenAI takes the deployment name as the model name
-            model=self.chatgpt_deployment if self.chatgpt_deployment else self.chatgpt_model,
+            model="gpt4" if overrides.get('use_gpt4') else "chat",
             messages=messages,
             temperature=overrides.get("temperature", 0.3),
             max_tokens=response_token_limit,

@@ -62,7 +62,7 @@ Execute the following commands inside your terminal:
 
 ## Using text-embedding-3 models
 
-By default, the deployed Azure web app uses the `text-embedding-ada-002` embedding model. If you want to use one of the text-embedding-3 models, you can do so by following these steps:
+By default, the deployed Azure web app uses the `text-embedding-3-large` embedding model. If you want to use one of the text-embedding-3 models, you can do so by following these steps:
 
 1. Run one of the following commands to set the desired model:
 

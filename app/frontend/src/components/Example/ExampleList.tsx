@@ -3,9 +3,14 @@ import { Example } from "./Example";
 import styles from "./Example.module.css";
 
 const DEFAULT_EXAMPLES: string[] = [
-    "What is included in my Northwind Health Plus plan that is not in standard?",
-    "What happens in a performance review?",
-    "What does a Product Manager do?"
+"What is the difference between K-446 and K-449?",
+"Can you tell me if we have application notes about protein determination in plant meat?",
+"How does TKN+ work?",
+"What is the material of the housing of K-365?",
+"What are the analytes that I can determine with a SpeedDigester K-439?",
+"What are the analytes that I can determine with an EasyKjel?",
+"Which instruments from Dist Line do have an alkali pump for NaOH dosing?",
+"On which instruments is MaxAccuracy mode available?",
 ];
 
 const GPT4V_EXAMPLES: string[] = [
@@ -19,10 +24,11 @@ interface Props {
     useGPT4V?: boolean;
 }
 
-export const ExampleList = ({ onExampleClicked, useGPT4V }: Props) => {
+export const ExampleList = ({ onExampleClicked}: Props) => {
+    const randomExamples = DEFAULT_EXAMPLES.sort(() => 0.5 - Math.random()).slice(0, 3);
     return (
         <ul className={styles.examplesNavList}>
-            {(useGPT4V ? GPT4V_EXAMPLES : DEFAULT_EXAMPLES).map((question, i) => (
+            {randomExamples.map((question, i) => (
                 <li key={i}>
                     <Example text={question} value={question} onClick={onExampleClicked} />
                 </li>

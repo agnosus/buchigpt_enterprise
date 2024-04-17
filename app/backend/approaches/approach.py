@@ -33,6 +33,7 @@ class Document:
     id: Optional[str]
     content: Optional[str]
     embedding: Optional[List[float]]
+    embedding2: Optional[List[float]]
     image_embedding: Optional[List[float]]
     category: Optional[str]
     sourcepage: Optional[str]
@@ -48,6 +49,7 @@ class Document:
             "id": self.id,
             "content": self.content,
             "embedding": Document.trim_embedding(self.embedding),
+            "embedding2": Document.trim_embedding(self.embedding2),
             "imageEmbedding": Document.trim_embedding(self.image_embedding),
             "category": self.category,
             "sourcepage": self.sourcepage,
@@ -164,6 +166,7 @@ class Approach(ABC):
                         id=document.get("id"),
                         content=document.get("content"),
                         embedding=document.get("embedding"),
+                        embedding2=document.get("embedding2"),
                         image_embedding=document.get("imageEmbedding"),
                         category=document.get("category"),
                         sourcepage=document.get("sourcepage"),
@@ -217,7 +220,7 @@ class Approach(ABC):
 
     async def compute_text_embedding(self, q: str):
         SUPPORTED_DIMENSIONS_MODEL = {
-            "text-embedding-ada-002": False,
+            "text-embedding-3-large": False,
             "text-embedding-3-small": True,
             "text-embedding-3-large": True,
         }
@@ -231,11 +234,10 @@ class Approach(ABC):
         embedding = await self.openai_client.embeddings.create(
             # Azure OpenAI takes the deployment name as the model name
             model=self.embedding_deployment if self.embedding_deployment else self.embedding_model,
-            input=q,
-            **dimensions_args,
+            input=q, dimensions=1536
         )
         query_vector = embedding.data[0].embedding
-        return VectorizedQuery(vector=query_vector, k_nearest_neighbors=50, fields="embedding")
+        return VectorizedQuery(vector=query_vector, k_nearest_neighbors=50, fields="embedding, embedding2")
 
     async def compute_image_embedding(self, q: str):
         endpoint = urljoin(self.vision_endpoint, "computervision/retrieval:vectorizeText")

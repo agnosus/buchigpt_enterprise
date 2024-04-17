@@ -54,11 +54,11 @@ export const VectorSettings = ({ updateRetrievalMode, updateVectorFields, showIm
     return (
         <Stack className={styles.container} tokens={{ childrenGap: 10 }}>
             <Dropdown
-                label="Retrieval mode"
+                label="Search mode"
                 options={[
-                    { key: "hybrid", text: "Vectors + Text (Hybrid)", selected: retrievalMode == RetrievalMode.Hybrid, data: RetrievalMode.Hybrid },
-                    { key: "vectors", text: "Vectors", selected: retrievalMode == RetrievalMode.Vectors, data: RetrievalMode.Vectors },
-                    { key: "text", text: "Text", selected: retrievalMode == RetrievalMode.Text, data: RetrievalMode.Text }
+                    { key: "hybrid", text: "Hybrid", selected: retrievalMode == RetrievalMode.Hybrid, data: RetrievalMode.Hybrid },
+                    // { key: "vectors", text: "Vectors", selected: retrievalMode == RetrievalMode.Vectors, data: RetrievalMode.Vectors },
+                    { key: "text", text: "Full text", selected: retrievalMode == RetrievalMode.Text, data: RetrievalMode.Text }
                 ]}
                 required
                 onChange={onRetrievalModeChange}

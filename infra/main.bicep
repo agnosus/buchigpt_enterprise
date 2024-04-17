@@ -107,7 +107,7 @@ param embeddingDeploymentVersion string = ''
 param embeddingDeploymentCapacity int = 0
 param embeddingDimensions int = 0
 var embedding = {
-  modelName: !empty(embeddingModelName) ? embeddingModelName : 'text-embedding-ada-002'
+  modelName: !empty(embeddingModelName) ? embeddingModelName : 'text-embedding-3-large'
   deploymentName: !empty(embeddingDeploymentName) ? embeddingDeploymentName : 'embedding'
   deploymentVersion: !empty(embeddingDeploymentVersion) ? embeddingDeploymentVersion : '2'
   deploymentCapacity: embeddingDeploymentCapacity != 0 ? embeddingDeploymentCapacity : 30

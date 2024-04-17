@@ -306,17 +306,17 @@ if __name__ == "__main__":
     parser.add_argument("--openaiservice", help="Name of the Azure OpenAI service used to compute embeddings")
     parser.add_argument(
         "--openaideployment",
-        help="Name of the Azure OpenAI model deployment for an embedding model ('text-embedding-ada-002' recommended)",
+        help="Name of the Azure OpenAI model deployment for an embedding model ('text-embedding-3-large' recommended)",
     )
     parser.add_argument(
-        "--openaimodelname", help="Name of the Azure OpenAI embedding model ('text-embedding-ada-002' recommended)"
+        "--openaimodelname", help="Name of the Azure OpenAI embedding model ('text-embedding-3-large' recommended)"
     )
     parser.add_argument(
         "--openaidimensions",
         required=False,
         default=1536,
         type=int,
-        help="Dimensions for the embedding model (defaults to 1536 for 'text-embedding-ada-002')",
+        help="Dimensions for the embedding model (defaults to 1536 for 'text-embedding-3-large')",
     )
     parser.add_argument(
         "--novectors",

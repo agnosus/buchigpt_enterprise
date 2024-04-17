@@ -11,7 +11,7 @@ from azure.search.documents.models import (
 from azure.storage.blob import BlobProperties
 
 MOCK_EMBEDDING_DIMENSIONS = 1536
-MOCK_EMBEDDING_MODEL_NAME = "text-embedding-ada-002"
+MOCK_EMBEDDING_MODEL_NAME = "text-embedding-3-large"
 
 MockToken = namedtuple("MockToken", ["token", "expires_on", "value"])
 
