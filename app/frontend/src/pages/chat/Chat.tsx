@@ -300,7 +300,7 @@ const Chat = () => {
                     {!lastQuestionRef.current ? (
                         <div className={styles.chatEmptyState}>
                             <SparkleFilled fontSize={"120px"} primaryFill={"rgba(115, 118, 225, 1)"} aria-hidden="true" aria-label="Chat logo" />
-                            <h1 className={styles.chatEmptyStateTitle}>KjelGPT</h1>
+                            <h1 className={styles.chatEmptyStateTitle}>SprayGPT</h1>
                             <h2 className={styles.chatEmptyStateSubtitle}>Ask anything or try an example</h2>
                             <ExampleList onExampleClicked={onExampleClicked} useGPT4V={useGPT4V} />
                         </div>

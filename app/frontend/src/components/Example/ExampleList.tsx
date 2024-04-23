@@ -3,14 +3,14 @@ import { Example } from "./Example";
 import styles from "./Example.module.css";
 
 const DEFAULT_EXAMPLES: string[] = [
-"What is the difference between K-446 and K-449?",
-"Can you tell me if we have application notes about protein determination in plant meat?",
-"How does TKN+ work?",
-"What is the material of the housing of K-365?",
-"What are the analytes that I can determine with a SpeedDigester K-439?",
-"What are the analytes that I can determine with an EasyKjel?",
-"Which instruments from Dist Line do have an alkali pump for NaOH dosing?",
-"On which instruments is MaxAccuracy mode available?",
+    "How does solid content affect the particle morphology in spray drying?",
+    "What is the effect of solution viscosity on atomization efficiency?",
+    "How does the type of excipient influence the drying performance and product characteristics?",
+    "How do inlet and outlet air temperatures affect the drying rate and product moisture content?",
+    "How does pump speed and air speed influence the properties of large porous particles?",
+    "What is the role of atomization pressure in achieving desired particle sizes and densities?",
+    "How does the drying temperature control the desulfurization efficiency in flue gas treatment?",
+    "How can optimization techniques and mathematical models enhance the quality and efficiency of spray drying processes?",
 ];
 
 const GPT4V_EXAMPLES: string[] = [
