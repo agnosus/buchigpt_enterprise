@@ -4,9 +4,14 @@ import json
 import logging
 import mimetypes
 import os
+import uuid
+from datetime import datetime
 from pathlib import Path
 from typing import Any, AsyncGenerator, Dict, Union, cast
-
+from azure.storage.blob import BlobServiceClient
+from azure.cosmos.aio import CosmosClient
+from azure.cosmos.exceptions import CosmosHttpResponseError
+from azure.core.exceptions import ResourceExistsError
 from azure.core.credentials import AzureKeyCredential
 from azure.core.credentials_async import AsyncTokenCredential
 from azure.core.exceptions import ResourceNotFoundError
@@ -72,11 +77,60 @@ from prepdocs import (
 from prepdocslib.filestrategy import UploadUserFileStrategy
 from prepdocslib.listfilestrategy import File
 
+# Configuration
+COSMOS_DB_URL = "https://kjelgpt.documents.azure.com:443/"
+COSMOS_DB_KEY = "yWWmuDgSLeZqGbcqqD2nynvr3V98iUmCdnKvBvWb3gcgxqdjByKftkhhRnEhKXSm1JAMDtyHpUmvACDbQYetFQ=="
+DATABASE_NAME = 'test'
+CONTAINER_NAME = 'test'
+
+cosmos_client = CosmosClient(COSMOS_DB_URL, COSMOS_DB_KEY)
+database = cosmos_client.get_database_client(DATABASE_NAME)
+container = database.get_container_client(CONTAINER_NAME)
+
+async def log_to_cosmos_db(log_data):
+    try:
+        # Create an item in the container
+        log_item = {
+            'id': str(uuid.uuid4()),  # Unique identifier for the log item
+            'timestamp': str(datetime.now()),  # Partition key
+            'messages': log_data
+        }
+        await container.create_item(body=log_item)
+        print("Log successfully written to Cosmos DB.")
+    except CosmosHttpResponseError as e:
+        print(f"An error occurred while writing to Cosmos DB: {e.message}")
+
 bp = Blueprint("routes", __name__, static_folder="static")
 # Fix Windows registry issue with mimetypes
 mimetypes.add_type("application/javascript", ".js")
 mimetypes.add_type("text/css", ".css")
 
+@bp.route("/log-feedback", methods=["POST"])
+async def log_feedback():
+    if not request.is_json:
+        return jsonify({"error": "request must be json"}), 415
+    
+    request_json = await request.get_json()
+    answer = request_json.get("answer")
+    question = request_json.get("question")
+    thumbs_up = request_json.get("thumbsUp")
+    thumbs_down = request_json.get("thumbsDown")
+    
+
+    if answer is None or thumbs_up is None or thumbs_down is None:
+        return jsonify({"error": "Invalid request data"}), 400
+
+    
+    
+    log_data = {
+        "question":question,
+        "answer": answer,
+        "thumbsUp": thumbs_up,
+        "thumbsDown": thumbs_down
+    }
+
+    await log_to_cosmos_db(log_data)
+    return jsonify({"message": "Feedback logged successfully"}), 201
 
 @bp.route("/")
 async def index():
@@ -206,6 +260,12 @@ async def chat(auth_claims: Dict[str, Any]):
             context=context,
             session_state=request_json.get("session_state"),
         )
+
+        # Log chat history if there are at least 3 messages
+        #log_data = request_json["messages"][-1]
+        #await log_to_cosmos_db(log_data)
+                
+           
         if isinstance(result, dict):
             return jsonify(result)
         else:

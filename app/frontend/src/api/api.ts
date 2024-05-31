@@ -92,3 +92,21 @@ export async function listUploadedFilesApi(idToken: string): Promise<string[]> {
     const dataResponse: string[] = await response.json();
     return dataResponse;
 }
+
+export async function logFeedbackApi(
+    answer: string,
+    thumbsUp: boolean,
+    thumbsDown: boolean,
+    idToken: string | undefined,
+    question: string | null
+): Promise<void> {
+    const response = await fetch(`${BACKEND_URI}/log-feedback`, {
+        method: "POST",
+        headers: { ...getHeaders(idToken), "Content-Type": "application/json" },
+        body: JSON.stringify({ answer, thumbsUp, thumbsDown, question }),
+    });
+
+    if (!response.ok) {
+        throw new Error(`Logging feedback failed: ${response.statusText}`);
+    }
+}

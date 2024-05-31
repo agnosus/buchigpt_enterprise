@@ -7,6 +7,7 @@ tenacity
 azure-ai-documentintelligence
 azure-search-documents==11.6.0b1
 azure-storage-blob
+azure-cosmos
 azure-storage-file-datalake
 uvicorn
 aiohttp
@@ -16,6 +17,7 @@ opentelemetry-instrumentation-httpx
 opentelemetry-instrumentation-requests
 opentelemetry-instrumentation-aiohttp-client
 opentelemetry-instrumentation-openai
+opentelemetry-util-http==0.44b0
 msal
 azure-keyvault-secrets
 cryptography

@@ -36,7 +36,7 @@ const Chat = () => {
     const [temperature, setTemperature] = useState<number>(0);
     const [minimumRerankerScore, setMinimumRerankerScore] = useState<number>(1.5);
     const [minimumSearchScore, setMinimumSearchScore] = useState<number>(0.03);
-    const [retrieveCount, setRetrieveCount] = useState<number>(30);
+    const [retrieveCount, setRetrieveCount] = useState<number>(3);
     const [retrievalMode, setRetrievalMode] = useState<RetrievalMode>(RetrievalMode.Hybrid);
     const [useSemanticRanker, setUseSemanticRanker] = useState<boolean>(true);
     const [shouldStream, setShouldStream] = useState<boolean>(true);
@@ -524,6 +524,9 @@ const Chat = () => {
 
                     {useLogin && <TokenClaimsDisplay />}
                 </Panel>
+                </div>
+            <div className={styles.disclaimer}>
+                <strong>Disclaimer:</strong> KjelGPT may produce incomplete or inaccurate information. Please consider the citations for verification.
             </div>
         </div>
     );

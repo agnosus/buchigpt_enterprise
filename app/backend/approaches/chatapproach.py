@@ -21,18 +21,18 @@ class ChatApproach(Approach, ABC):
     ASSISTANT = "assistant"
 
     query_prompt_few_shots = [
-        {"role": USER, "content": "How did crypto do last year?"},
-        {"role": ASSISTANT, "content": "Summarize Cryptocurrency Market Dynamics from last year"},
-        {"role": USER, "content": "What are my health plans?"},
-        {"role": ASSISTANT, "content": "Show available health plans"},
+        {'role': 'user', 'content': 'How does the feature AutoDist work?'},
+        {'role': 'assistant', 'content': 'Explain function of AutoDist feature'},
+        {'role': 'user', 'content': 'What are suitable instruments for determining nitrogen?'},
+        {'role': 'assistant', 'content': 'Show suitable instruments for nitrogen determination'}
     ]
     NO_RESPONSE = "0"
 
     follow_up_questions_prompt_content = """Generate 3 very brief follow-up questions that the user would likely ask next.
     Enclose the follow-up questions in double angle brackets. Example:
-    <<Are there exclusions for prescriptions?>>
-    <<Which pharmacies can be ordered from?>>
-    <<What is the limit for over-the-counter medication?>>
+    <<Explain the function of AutoDist feature>>
+    <<What are suitable instruments for determining nitrogen?>>
+    <<Can MaxAccuracy mode be deactivated?>>
     Do no repeat questions that have already been asked.
     Make sure the last question ends with ">>".
     """

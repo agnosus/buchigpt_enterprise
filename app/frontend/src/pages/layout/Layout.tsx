@@ -8,7 +8,7 @@ import { useLogin } from "../../authConfig";
 
 import { LoginButton } from "../../components/LoginButton";
 
-import logo from '/workspaces/azure-search-openai-demo/app/frontend/src/assets/BUCHI Logo_Green.png';
+import logo from '/workspaces/buchigpt_enterprise/app/frontend/src/assets/BUCHI Logo_Green.png';
 
 const Layout = () => {
     return (
