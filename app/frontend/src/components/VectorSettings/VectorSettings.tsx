@@ -6,6 +6,7 @@ import { RetrievalMode, VectorFieldOptions } from "../../api";
 
 interface Props {
     showImageOptions?: boolean;
+    defaultRetrievalMode: RetrievalMode;
     updateRetrievalMode: (retrievalMode: RetrievalMode) => void;
     updateVectorFields: (options: VectorFieldOptions[]) => void;
 }
@@ -25,7 +26,7 @@ const vectorFields: IChoiceGroupOption[] = [
     }
 ];
 
-export const VectorSettings = ({ updateRetrievalMode, updateVectorFields, showImageOptions }: Props) => {
+export const VectorSettings = ({ updateRetrievalMode, updateVectorFields, showImageOptions, defaultRetrievalMode }: Props) => {
     const [retrievalMode, setRetrievalMode] = useState<RetrievalMode>(RetrievalMode.Hybrid);
     const [vectorFieldOption, setVectorFieldOption] = useState<string>();
 

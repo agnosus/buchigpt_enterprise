@@ -3,10 +3,10 @@ import { Stack, IconButton } from "@fluentui/react";
 import DOMPurify from "dompurify";
 
 import styles from "./Answer.module.css";
-
 import { ChatAppResponse, getCitationFilePath } from "../../api";
 import { parseAnswerToHtml } from "./AnswerParser";
 import { AnswerIcon } from "./AnswerIcon";
+import { SpeechOutput } from "./SpeechOutput";
 import { logFeedbackApi } from "../../api"; // Import the new function
 
 interface Props {
@@ -18,6 +18,8 @@ interface Props {
     onSupportingContentClicked: () => void;
     onFollowupQuestionClicked?: (question: string) => void;
     showFollowupQuestions?: boolean;
+    showSpeechOutput?: boolean;
+    speechUrl: string | null;
     idToken?: string; // Add idToken to props if not already present
 }
 
@@ -42,6 +44,8 @@ export const Answer = ({
     onSupportingContentClicked,
     onFollowupQuestionClicked,
     showFollowupQuestions,
+    showSpeechOutput,
+    speechUrl,
     idToken // Destructure idToken from props
 }: Props) => {
     const followupQuestions = answer.choices[0].context.followup_questions;
@@ -118,6 +122,7 @@ export const Answer = ({
                             onClick={() => onSupportingContentClicked()}
                             disabled={!answer.choices[0].context.data_points}
                         />
+                        {showSpeechOutput && <SpeechOutput url={speechUrl} />}
                         <IconButton
                             // Change color based on thumbsUp state
                             style={{ color: feedback.thumbsUp ? "green" : "black" }}
