@@ -37,7 +37,7 @@ const Chat = () => {
     const [temperature, setTemperature] = useState<number>(0);
     const [minimumRerankerScore, setMinimumRerankerScore] = useState<number>(1.5);
     const [minimumSearchScore, setMinimumSearchScore] = useState<number>(0.03);
-    const [retrieveCount, setRetrieveCount] = useState<number>(3);
+    const [retrieveCount, setRetrieveCount] = useState<number>(30);
     const [retrievalMode, setRetrievalMode] = useState<RetrievalMode>(RetrievalMode.Hybrid);
     const [useSemanticRanker, setUseSemanticRanker] = useState<boolean>(true);
     const [shouldStream, setShouldStream] = useState<boolean>(true);
@@ -50,22 +50,17 @@ const Chat = () => {
     const [gpt4vInput, setGPT4VInput] = useState<GPT4VInput>(GPT4VInput.TextAndImages);
     const [useGPT4V, setUseGPT4V] = useState<boolean>(false);
     const [useGPT4, setUseGPT4] = useState<boolean>(false);
-
     const lastQuestionRef = useRef<string>("");
     const chatMessageStreamEnd = useRef<HTMLDivElement | null>(null);
-
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [isStreaming, setIsStreaming] = useState<boolean>(false);
     const [error, setError] = useState<unknown>();
-
     const [activeCitation, setActiveCitation] = useState<string>();
     const [activeAnalysisPanelTab, setActiveAnalysisPanelTab] = useState<AnalysisPanelTabs | undefined>(undefined);
-
     const [selectedAnswer, setSelectedAnswer] = useState<number>(0);
     const [answers, setAnswers] = useState<[user: string, response: ChatAppResponse][]>([]);
     const [streamedAnswers, setStreamedAnswers] = useState<[user: string, response: ChatAppResponse][]>([]);
     const [speechUrls, setSpeechUrls] = useState<(string | null)[]>([]);
-
     const [showGPT4VOptions, setShowGPT4VOptions] = useState<boolean>(false);
     const [showSemanticRankerOption, setShowSemanticRankerOption] = useState<boolean>(false);
     const [showVectorOption, setShowVectorOption] = useState<boolean>(false);
@@ -483,13 +478,17 @@ const Chat = () => {
                         label="Use query-contextual summaries instead of whole documents"
                         onChange={onUseSemanticCaptionsChange}
                         disabled={!useSemanticRanker}
-                    />
+                    />*/}
                     <Checkbox
                         className={styles.chatSettingsSeparator}
                         checked={useSuggestFollowupQuestions}
                         label="Suggest follow-up questions"
                         onChange={onUseSuggestFollowupQuestionsChange}
-                    /> */}
+                    /> 
+
+                    <div className={styles.chatSettingsSeparator}>
+                    
+                    </div>
 
                     {showGPT4VOptions && (
                         <GPT4VSettings
@@ -504,7 +503,7 @@ const Chat = () => {
 
                     <Checkbox
                         className={styles.askSettingsSeparator}                 checked={useGPT4}
-                        label="Use GPT4 (can be very slow!)"
+                        label="GPT4o (use for tricky questions!)"
                         onChange={onUseGPT4Change}
                 
                     />

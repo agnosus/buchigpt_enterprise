@@ -38,11 +38,14 @@ export async function askApi(request: ChatAppRequest, idToken: string | undefine
 }
 
 export async function chatApi(request: ChatAppRequest, idToken: string | undefined): Promise<Response> {
-    return await fetch(`${BACKEND_URI}/chat`, {
+    
+    const response = await fetch(`${BACKEND_URI}/chat`, {
         method: "POST",
         headers: { ...getHeaders(idToken), "Content-Type": "application/json" },
         body: JSON.stringify(request)
     });
+    
+    return response;
 }
 
 export async function getSpeechApi(text: string): Promise<string | null> {
