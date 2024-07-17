@@ -91,7 +91,7 @@ from prepdocslib.listfilestrategy import File
 
 # Configuration
 COSMOS_DB_URL = "https://kjelgpt.documents.azure.com:443/"
-COSMOS_DB_KEY = "yWWmuDgSLeZqGbcqqD2nynvr3V98iUmCdnKvBvWb3gcgxqdjByKftkhhRnEhKXSm1JAMDtyHpUmvACDbQYetFQ=="
+COSMOS_DB_KEY = os.getenv('COSMOS_DB_KEY')
 DATABASE_NAME = 'test'
 CONTAINER_NAME = 'test'
 
@@ -105,7 +105,8 @@ async def log_to_cosmos_db(log_data):
         log_item = {
             'id': str(uuid.uuid4()),  # Unique identifier for the log item
             'timestamp': str(datetime.now()),  # Partition key
-            'messages': log_data
+            'messages': log_data,
+            'gpt': "kjel"
         }
         await container.create_item(body=log_item)
         print("Log successfully written to Cosmos DB.")
