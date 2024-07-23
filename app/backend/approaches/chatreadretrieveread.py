@@ -56,23 +56,18 @@ class ChatReadRetrieveReadApproach(ChatApproach):
     @property
     def system_message_chat_conversation(self):
         return """You are a helpful assistant that answers technical questions about Kjeldahl and distillation. Be brief in your answers.
-
-Concepts to remember:
-- Application: A method used on an instrument to determine the amount of a given analyte or to describe how to use the instrument on a given sample type with specific parameters. Methods, procedures, and results of such applications are explained in application notes.
-- Configuration/Instrument Configuration: An instrument with a particular article number that includes a set of features, components, or accessories. A bundle refers to an instrument sold with another instrument, usually with a specific article number.
-- Digesters (Digestion Units): Instruments such as KjelDigester K-446 and KjelDigester K-449, which are block digesters. SpeedDigesters include SpeedDigester K-425, SpeedDigesters K-436, and SpeedDigesters K-439.
-- Scrubber K-415: An instrument for fume removal during digestion, available in multiple configurations (DuoScrub, TripleScrub, TripleScrubECO, QuadScrubECO).
-- Distillation Units: Instruments divided into low-mid-range distillation (product line K-365) and high-end Kjeldahl distillation:
-  - Kjel Line: For nitrogen-containing analytes, consisting of EasyKjel, BasicKjel, and MultiKjel.
-  - Dist Line: Consisting of EasyDist, BasicDist, and MultiDist, each with different analyte capabilities.
-  - High-End Kjeldahl: Includes the KjelMaster K-375 (a distillation unit with integrated titration for nitrogen-containing analytes) which can be coupled with KjelSampler K-376 / K-377 (an autosampler instrument that can transfer samples to the KjelMaster K-375).
-
-Answer ONLY with the facts listed in the list of sources below. If there isn't enough information, say you don't know and that you are being trained and will be updated soon. Do not generate answers that don't use the sources below. If asking a clarifying question to the user would help, ask the question.
-
-For tabular information, return it as an HTML table. Do not return markdown format. If the question is not in English, answer in the language used in the question.
-
-Each source has a name followed by the actual information. Always include the source name for each fact you use in the response. Use square brackets to reference the source, for example [info1.txt]. Don't combine sources, list each source separately, for example [info1.txt][info2.pdf].
-
+    Concepts to remember:
+    - Application: A method used on an instrument to determine the amount of a given analyte or to describe how to use the instrument on a given sample type with specific parameters. Methods, procedures, and results of such applications are explained in application notes.
+    - Configuration/Instrument Configuration: An instrument with a particular article number that includes a set of features, components, or accessories. A bundle refers to an instrument sold with another instrument, usually with a specific article number.
+    - Digesters (Digestion Units): Instruments such as KjelDigester K-446 and KjelDigester K-449, which are block digesters. SpeedDigesters include SpeedDigester K-425, SpeedDigesters K-436, and SpeedDigesters K-439.
+    - Scrubber K-415: An instrument for fume removal during digestion, available in multiple configurations (DuoScrub, TripleScrub, TripleScrubECO, QuadScrubECO).
+    - Distillation Units: Instruments divided into low-mid-range distillation (product line K-365) and high-end Kjeldahl distillation:
+      - Kjel Line: For nitrogen-containing analytes, consisting of EasyKjel, BasicKjel, and MultiKjel.
+      - Dist Line: Consisting of EasyDist, BasicDist, and MultiDist, each with different analyte capabilities.
+      - High-End Kjeldahl: Includes the KjelMaster K-375 (a distillation unit with integrated titration for nitrogen-containing analytes) which can be coupled with KjelSampler K-376 / K-377 (an autosampler instrument that can transfer samples to the KjelMaster K-375).
+Answer ONLY with the facts listed in the list of sources below. If there isn't enough information, just say "I was not able to find any information in the provided resources. If your question is considered relevant and there should be an answer available, I will receive training and updates in the coming weeks." Do not generate answers that don't use the sources below. If asking a clarifying question to the user would help, ask the question.
+   For tabular information, return it as an HTML table. Do not return markdown format. Always use plain text for equations. If the question is not in English, answer in the language used in the question.
+   Each source has a name followed by the actual information. Always include the source name for each fact you use in the response. Use square brackets to reference the source, for example [example1.txt]. Don't combine sources, list each source separately, for example [example1.txt][example2.pdf].
 {follow_up_questions_prompt}
 {injected_prompt}
 
@@ -105,10 +100,16 @@ Each source has a name followed by the actual information. Always include the so
     ) -> tuple[dict[str, Any], Coroutine[Any, Any, Union[ChatCompletion, AsyncStream[ChatCompletionChunk]]]]:
         has_text = overrides.get("retrieval_mode") in ["text", "hybrid", None]
         has_vector = overrides.get("retrieval_mode") in ["vectors", "hybrid", None]
-        use_semantic_captions = True if overrides.get("semantic_captions") and has_text else False
-        top = overrides.get("top", 3)
-        minimum_search_score = overrides.get("minimum_search_score", 0.0)
-        minimum_reranker_score = overrides.get("minimum_reranker_score", 0.0)
+        
+        use_semantic_captions = True if overrides.get("retrieval_mode") == "text" else False
+        if use_semantic_captions:
+            top = 3
+            minimum_search_score = 0
+            minimum_reranker_score = 0
+        else:
+            top = overrides.get("top", 3)
+            minimum_search_score = overrides.get("minimum_search_score", 0.0)
+            minimum_reranker_score = overrides.get("minimum_reranker_score", 0.0)
 
         filter = self.build_filter(overrides, auth_claims)
         use_semantic_ranker = True if overrides.get("semantic_ranker") and has_text else False
@@ -184,8 +185,18 @@ Each source has a name followed by the actual information. Always include the so
             minimum_reranker_score,
         )
 
-        # GAHAintervention: each result is checked using gpt to see if it can answer the question 
         async def generate_response(user_query, DOC, i):
+            """
+            Generates a response for a given user query using GPT based on a specific document from DOC.
+            
+            Args:
+                user_query (str): The query from the user that needs to be answered.
+                DOC (list): A list of document objects containing content to be checked.
+                i (int): The index of the document in DOC to be used for generating the response.
+
+            Returns:
+                str: The response generated by GPT based on the document content or 'NONE' if the context is insufficient.
+            """
             doc = DOC[i].content
             response = await self.openai_client.chat.completions.create(
                 model="gpt4" if overrides.get('use_gpt4') else "chat",
@@ -204,6 +215,18 @@ Each source has a name followed by the actual information. Always include the so
             return response_str
 
         async def generate_responses_async(user_query, DOC):
+            """
+            Generates responses for a user query across multiple documents asynchronously.
+
+            Args:
+                user_query (str): The query from the user that needs to be answered.
+                DOC (list): A list of document objects containing content to be checked.
+
+            Returns:
+                tuple: A tuple containing two lists:
+                    - RESPONSE (list): A list of responses generated by GPT that are not 'NONE'.
+                    - INDICES (list): A list of indices corresponding to the documents that provided valid responses.
+            """
             tasks = [generate_response(user_query, DOC, i) for i in range(len(DOC))]
             responses = await asyncio.gather(*tasks)
 
@@ -218,14 +241,12 @@ Each source has a name followed by the actual information. Always include the so
 
         RESPONSE, INDICES = await generate_responses_async(query_text, results)
 
-        
         for i in INDICES:
             idx = INDICES.index(i)
             results[i].content = RESPONSE[idx]
         final_result = [results[i] for i in INDICES]
         results = final_result
 
-        # end of intervention
 
 
         sources_content = self.get_sources_content(results, use_semantic_captions, use_image_citation=False)
@@ -257,11 +278,7 @@ Each source has a name followed by the actual information. Always include the so
                 ThoughtStep(
                     "Prompt to generate search query",
                     [str(message) for message in query_messages],
-                    (
-                        {"model": self.chatgpt_model, "deployment": self.chatgpt_deployment}
-                        if self.chatgpt_deployment
-                        else {"model": self.chatgpt_model}
-                    ),
+                    {"model": "gpt4o"}
                 ),
                 ThoughtStep(
                     "Search using generated search query",
@@ -281,11 +298,7 @@ Each source has a name followed by the actual information. Always include the so
                 ThoughtStep(
                     "Prompt to generate answer",
                     [str(message) for message in messages],
-                    (
-                        {"model": self.chatgpt_model, "deployment": self.chatgpt_deployment}
-                        if self.chatgpt_deployment
-                        else {"model": self.chatgpt_model}
-                    ),
+                    {"model": "gpt4o"}
                 ),
             ],
         }
