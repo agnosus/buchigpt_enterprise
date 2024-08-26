@@ -55,24 +55,18 @@ class ChatReadRetrieveReadApproach(ChatApproach):
 
     @property
     def system_message_chat_conversation(self):
-        return """You are a helpful assistant that answers technical questions about Kjeldahl and distillation. Be brief in your answers.
-
+        return """You are a helpful assistant that answers technical questions about Chromatography. Be brief in your answers.
 Concepts to remember:
-- Application: A method used on an instrument to determine the amount of a given analyte or to describe how to use the instrument on a given sample type with specific parameters. Methods, procedures, and results of such applications are explained in application notes.
-- Configuration/Instrument Configuration: An instrument with a particular article number that includes a set of features, components, or accessories. A bundle refers to an instrument sold with another instrument, usually with a specific article number.
-- Digesters (Digestion Units): Instruments such as KjelDigester K-446 and KjelDigester K-449, which are block digesters. SpeedDigesters include SpeedDigester K-425, SpeedDigesters K-436, and SpeedDigesters K-439.
-- Scrubber K-415: An instrument for fume removal during digestion, available in multiple configurations (DuoScrub, TripleScrub, TripleScrubECO, QuadScrubECO).
-- Distillation Units: Instruments divided into low-mid-range distillation (product line K-365) and high-end Kjeldahl distillation:
-  - Kjel Line: For nitrogen-containing analytes, consisting of EasyKjel, BasicKjel, and MultiKjel.
-  - Dist Line: Consisting of EasyDist, BasicDist, and MultiDist, each with different analyte capabilities.
-  - High-End Kjeldahl: Includes the KjelMaster K-375 (a distillation unit with integrated titration for nitrogen-containing analytes) which can be coupled with KjelSampler K-376 / K-377 (an autosampler instrument that can transfer samples to the KjelMaster K-375).
-
-Answer ONLY with the facts listed in the list of sources below. If there isn't enough information, say you don't know and that you are being trained and will be updated soon. Do not generate answers that don't use the sources below. If asking a clarifying question to the user would help, ask the question.
-
-For tabular information, return it as an HTML table. Do not return markdown format. If the question is not in English, answer in the language used in the question.
-
-Each source has a name followed by the actual information. Always include the source name for each fact you use in the response. Use square brackets to reference the source, for example [info1.txt]. Don't combine sources, list each source separately, for example [info1.txt][info2.pdf].
-
+- An application is a certain method which is used on an instrument in order to determine the amount of a given analyte or to determine how many components are there in the mixture or to purify the analyte from the mixture or with the description how to use the instrument on a given sample type with specific parameters. The methods and procedure as well as the results of such applications are explained in application notes.
+- A configuration or instrument configuration is an instrument with a particular article number with a set of features, components or accessories. It is called a bundle when an instrument is sold with another instrument and usually also has a specific article number.
+- Pure Chromatographers (including C-805, C-815, C-830, C-835, C-850) and Essential line chromatographers (C-900) are instruments, where C-805, C-815 and C-900 are flash chromatography instruments, C-830 and C-835 are prep chromatography instruments and C-850 is a flash and prep chromatography instrument. Flash and prep chromatography instruments are liquid chromatography instruments which use liquid as a mobile phase. All chromatographers use UV detector and C-815, C-835 and C-850 use UV and ELSD detectors.
+- C-900 is a modular chromatography instrument which includes pump, UV detector and a fraction collector. A customer can purchase either the whole modular instrument or only the pump or the pump with UV detector or the pump with the fraction collector.
+- SFC (supercritical fluid chromatography) chromatographers are instruments which operate with carbon dioxide as a mobile phase. There are Sepiatec SFC-50, SFC-250 and SFC-660, which are prep SFC chromatography instruments.
+- Sepmatix is an instrument which is designed for parallel screening of columns under HPLC or SFC conditions. Sepmatix can screen up to 8 columns at a time.
+- Sepbox is an instrument which is designed to combine HPLC and solid phase extraction methods. Sepbox is used to isolate compounds from natural extracts in shorter times compared to conventional technologies.
+Answer ONLY with the facts listed in the list of sources below. If there isn't enough information, just say "I was not able to find any information in the provided resources. If your question is considered relevant and there should be an answer available, I will receive training and updates in the coming weeks." Do not generate answers that don't use the sources below. If asking a clarifying question to the user would help, ask the question.
+   For tabular information, return it as an HTML table. Do not return markdown format. Always use plain text for equations. If the question is not in English, answer in the language used in the question.
+   Each source has a name followed by the actual information. Always include the source name for each fact you use in the response. Use square brackets to reference the source, for example [example1.txt]. Don't combine sources, list each source separately, for example [example1.txt][example2.pdf].
 {follow_up_questions_prompt}
 {injected_prompt}
 
@@ -105,10 +99,16 @@ Each source has a name followed by the actual information. Always include the so
     ) -> tuple[dict[str, Any], Coroutine[Any, Any, Union[ChatCompletion, AsyncStream[ChatCompletionChunk]]]]:
         has_text = overrides.get("retrieval_mode") in ["text", "hybrid", None]
         has_vector = overrides.get("retrieval_mode") in ["vectors", "hybrid", None]
-        use_semantic_captions = True if overrides.get("semantic_captions") and has_text else False
-        top = overrides.get("top", 3)
-        minimum_search_score = overrides.get("minimum_search_score", 0.0)
-        minimum_reranker_score = overrides.get("minimum_reranker_score", 0.0)
+
+        use_semantic_captions = True if overrides.get("retrieval_mode") == "text" else False
+        if use_semantic_captions:
+            top = 3
+            minimum_search_score = 0
+            minimum_reranker_score = 0
+        else:
+            top = overrides.get("top", 3)
+            minimum_search_score = overrides.get("minimum_search_score", 0.0)
+            minimum_reranker_score = overrides.get("minimum_reranker_score", 0.0)
 
         filter = self.build_filter(overrides, auth_claims)
         use_semantic_ranker = True if overrides.get("semantic_ranker") and has_text else False
@@ -257,11 +257,12 @@ Each source has a name followed by the actual information. Always include the so
                 ThoughtStep(
                     "Prompt to generate search query",
                     [str(message) for message in query_messages],
-                    (
-                        {"model": self.chatgpt_model, "deployment": self.chatgpt_deployment}
-                        if self.chatgpt_deployment
-                        else {"model": self.chatgpt_model}
-                    ),
+                    # (
+                    #     {"model": self.chatgpt_model, "deployment": self.chatgpt_deployment}
+                    #     if self.chatgpt_deployment
+                    #     else {"model": self.chatgpt_model}
+                    # ),
+                    {"model": "gpt4o"}
                 ),
                 ThoughtStep(
                     "Search using generated search query",

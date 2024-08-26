@@ -105,7 +105,8 @@ async def log_to_cosmos_db(log_data):
         log_item = {
             'id': str(uuid.uuid4()),  # Unique identifier for the log item
             'timestamp': str(datetime.now()),  # Partition key
-            'messages': log_data
+            'messages': log_data,
+            'gpt': "chroma"
         }
         await container.create_item(body=log_item)
         print("Log successfully written to Cosmos DB.")

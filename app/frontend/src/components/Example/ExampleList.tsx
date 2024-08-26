@@ -3,14 +3,20 @@ import { Example } from "./Example";
 import styles from "./Example.module.css";
 
 const DEFAULT_EXAMPLES: string[] = [
-"What is the difference between K-446 and K-449?",
-"Can you tell me if we have application notes about protein determination in plant meat?",
-"How does TKN+ work?",
-"What is the material of the housing of K-365?",
-"What are the analytes that I can determine with a SpeedDigester K-439?",
-"What are the analytes that I can determine with an EasyKjel?",
-"Which instruments from Dist Line do have an alkali pump for NaOH dosing?",
-"On which instruments is MaxAccuracy mode available?",
+    "What particle sizes are used in FlashPure cartridges?",
+    "What are the dimensions for columns in the SFC-250 ?",
+    "What is the maximum operating pressure for the  SFC-660 ?",
+    "What is the purpose of the add-on pump in SFC instruments?",
+    "What phase types are used in PrepPure columns?",
+    "What is the function of the FlashPure cartridge holder?",
+    "What sample injection options are available for the Pure?",
+    "What is the purpose of the mixing chambers in the Pure?",
+    "What is the function of the solid loader in the Pure?",
+    "What is the maximum sample size for the solid loader in the Pure?",
+    "What are the key features of the Pure C-830 Prep chromatography?",
+    "What are the selectable DAD wavelengths in Sepiatec SFC instruments?",
+    "What is the function of the chiller in Sepiatec SFC instruments?",
+    "What type of phases are used in  SFC columns?"
 ];
 
 const GPT4V_EXAMPLES: string[] = [
