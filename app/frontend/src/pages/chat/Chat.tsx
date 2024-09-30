@@ -315,7 +315,7 @@ const Chat = () => {
                     {!lastQuestionRef.current ? (
                         <div className={styles.chatEmptyState}>
                             <SparkleFilled fontSize={"120px"} primaryFill={"rgba(115, 118, 225, 1)"} aria-hidden="true" aria-label="Chat logo" />
-                            <h1 className={styles.chatEmptyStateTitle}>ChromaGPT</h1>
+                            <h1 className={styles.chatEmptyStateTitle}>RotiGPT</h1>
                             <h2 className={styles.chatEmptyStateSubtitle}>Ask anything or try an example</h2>
                             <ExampleList onExampleClicked={onExampleClicked} useGPT4V={useGPT4V} />
                         </div>
@@ -386,7 +386,7 @@ const Chat = () => {
                     <div className={styles.chatInput}>
                         <QuestionInput
                             clearOnSend
-                            placeholder="Type a new question (e.g. Particle sizes in FlashPure cartridges?)"
+                            placeholder="Type a new question (e.g. what are the dimensions of the R-80?)"
                             disabled={isLoading}
                             onSend={question => makeApiRequest(question)}
                             showSpeechInput={showSpeechInput}
@@ -434,7 +434,7 @@ const Chat = () => {
                         showValue
                         snapToStep
                     /> */}
-{/* 
+                    {/* 
                     <SpinButton
                         className={styles.chatSettingsSeparator}
                         label="Minimum search score"
@@ -443,7 +443,7 @@ const Chat = () => {
                         defaultValue={minimumSearchScore.toString()}
                         onChange={onMinimumSearchScoreChange}
                     /> */}
-{/* 
+                    {/* 
                     <SpinButton
                         className={styles.chatSettingsSeparator}
                         label="Minimum reranker score"
@@ -484,11 +484,9 @@ const Chat = () => {
                         checked={useSuggestFollowupQuestions}
                         label="Suggest follow-up questions"
                         onChange={onUseSuggestFollowupQuestionsChange}
-                    /> 
+                    />
 
-                    <div className={styles.chatSettingsSeparator}>
-                    
-                    </div>
+                    <div className={styles.chatSettingsSeparator}></div>
 
                     {showGPT4VOptions && (
                         <GPT4VSettings
@@ -501,12 +499,7 @@ const Chat = () => {
                         />
                     )}
 
-                    <Checkbox
-                        className={styles.askSettingsSeparator}                 checked={useGPT4}
-                        label="GPT4o (use for tricky questions!)"
-                        onChange={onUseGPT4Change}
-                
-                    />
+                    <Checkbox className={styles.askSettingsSeparator} checked={useGPT4} label="GPT4o (use for tricky questions!)" onChange={onUseGPT4Change} />
 
                     {showVectorOption && (
                         <VectorSettings
@@ -535,7 +528,7 @@ const Chat = () => {
                             onChange={onUseGroupsSecurityFilterChange}
                         />
                     )}
-{/* 
+                    {/* 
                     <Checkbox
                         className={styles.chatSettingsSeparator}
                         checked={shouldStream}
@@ -543,15 +536,14 @@ const Chat = () => {
                         onChange={onShouldStreamChange}
                     /> */}
 
-                    <div className={styles.chatSettingsSeparator}>
-                    Use 'Full text' option for numerical or keyword search (e.g. article numbers)
-                    </div>
+                    <div className={styles.chatSettingsSeparator}>Use 'Full text' option for numerical or keyword search (e.g. article numbers)</div>
 
                     {useLogin && <TokenClaimsDisplay />}
                 </Panel>
-                </div>
+            </div>
             <div className={styles.disclaimer}>
-            <strong>Disclaimer:</strong> ChromaGPT may produce incomplete or inaccurate information. Please consider the citations for verification. Report issues <a href="mailto:porus.m@buchi.com">here</a>.
+                <strong>Disclaimer:</strong> RotiGPT may produce incomplete or inaccurate information. Please consider the citations for verification. Report
+                issues <a href="mailto:schmed.d@buchi.com">here</a>.
             </div>
         </div>
     );

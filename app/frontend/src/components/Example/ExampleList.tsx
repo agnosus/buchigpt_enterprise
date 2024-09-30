@@ -3,20 +3,11 @@ import { Example } from "./Example";
 import styles from "./Example.module.css";
 
 const DEFAULT_EXAMPLES: string[] = [
-    "What particle sizes are used in FlashPure cartridges?",
-    "What are the dimensions for columns in the SFC-250 ?",
-    "What is the maximum operating pressure for the  SFC-660 ?",
-    "What is the purpose of the add-on pump in SFC instruments?",
-    "What phase types are used in PrepPure columns?",
-    "What is the function of the FlashPure cartridge holder?",
-    "What sample injection options are available for the Pure?",
-    "What is the purpose of the mixing chambers in the Pure?",
-    "What is the function of the solid loader in the Pure?",
-    "What is the maximum sample size for the solid loader in the Pure?",
-    "What are the key features of the Pure C-830 Prep chromatography?",
-    "What are the selectable DAD wavelengths in Sepiatec SFC instruments?",
-    "What is the function of the chiller in Sepiatec SFC instruments?",
-    "What type of phases are used in  SFC columns?"
+    "What are the dimensions of the R-80?",
+    "My R-300 cant reach the desired vacuum. What should I do?",
+    "how does the foam sensor work?",
+    "That is the largest flask size that can be used with the Rotavapor R-100?",
+    "Can Silicon oil be used as a heating bath fluid on the Rotavapor R-300?"    
 ];
 
 const GPT4V_EXAMPLES: string[] = [
