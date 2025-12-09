@@ -1,0 +1,15 @@
+antenv/
+.venv/
+venv/
+env/
+ENV/
+__pycache__/
+*.pyc
+.git/
+.DS_Store
+*.log
+tests/
+.pytest_cache/
+.coverage
+.idea/
+.vscode/

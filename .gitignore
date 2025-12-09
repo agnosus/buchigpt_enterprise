@@ -116,6 +116,7 @@ venv/
 ENV/
 env.bak/
 venv.bak/
+antenv/  
 
 # Spyder project settings
 .spyderproject
@@ -149,3 +150,4 @@ static/
 data/**/*.md5
 
 .DS_Store
+antenv/
