@@ -12,12 +12,12 @@ services:
       prepackage:
         windows:
           shell: pwsh
-          run:  cd ../frontend;npm install;npm run build
+          run: cd ../frontend;npm install;npm run build;Remove-Item -Recurse -Force node_modules
           interactive: false
           continueOnError: false
         posix:
           shell: sh
-          run:  cd ../frontend;npm install;npm run build
+          run: cd ../frontend && npm install && npm run build && rm -rf node_modules
           interactive: false
           continueOnError: false
 pipeline:
